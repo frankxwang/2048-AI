@@ -16,4 +16,7 @@ public class Main {
 	    game.setLocationRelativeTo(null);
 	    game.setVisible(true);
 	  }
+	  public static void getScore() {
+		  return;
+	  }
 }

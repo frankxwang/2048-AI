@@ -360,17 +360,4 @@ public class Game2048 extends JPanel {
       return new Color(0xcdc1b4);
     }
   }
-
-  public static void main(String[] args) {
-    JFrame game = new JFrame();
-    game.setTitle("2048 Game");
-    game.setDefaultCloseOperation(WindowConstants.EXIT_ON_CLOSE);
-    game.setSize(340, 400);
-    game.setResizable(false);
-
-    game.add(new Game2048());
-
-    game.setLocationRelativeTo(null);
-    game.setVisible(true);
-  }
 }

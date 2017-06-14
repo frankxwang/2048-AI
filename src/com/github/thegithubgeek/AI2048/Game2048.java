@@ -11,17 +11,18 @@ import java.util.List;
 /**
  * @author Konstantin Bulenkov
  */
+@SuppressWarnings("serial")
 public class Game2048 extends JPanel {
 	private static final Color BG_COLOR = new Color(0xbbada0);
 	private static final String FONT_NAME = "Arial";
 	private static final int TILE_SIZE = 64;
 	private static final int TILES_MARGIN = 16;
 
-	private Tile[] myTiles;
-	boolean myWin = false;
-	boolean myLose = false;
-	int myScore = 0;
-
+	public static Tile[] myTiles;
+	static boolean myWin = false;
+	static boolean myLose = false;
+	static int myScore = 0;
+	
 	public Game2048() {
 		setPreferredSize(new Dimension(340, 400));
 		setFocusable(true);
@@ -61,7 +62,7 @@ public class Game2048 extends JPanel {
 		});
 		resetGame();
 	}
-
+	
 	public void resetGame() {
 		myScore = 0;
 		myWin = false;
@@ -74,7 +75,7 @@ public class Game2048 extends JPanel {
 		addTile();
 	}
 
-	public void left() {
+	public static void left() {
 		boolean needAddTile = false;
 		for (int i = 0; i < 4; i++) {
 			Tile[] line = getLine(i);
@@ -90,29 +91,29 @@ public class Game2048 extends JPanel {
 		}
 	}
 
-	public void right() {
+	public static void right() {
 		myTiles = rotate(180);
 		left();
 		myTiles = rotate(180);
 	}
 
-	public void up() {
+	public static void up() {
 		myTiles = rotate(270);
 		left();
 		myTiles = rotate(90);
 	}
 
-	public void down() {
+	public static void down() {
 		myTiles = rotate(90);
 		left();
 		myTiles = rotate(270);
 	}
 
-	private Tile tileAt(int x, int y) {
+	private static Tile tileAt(int x, int y) {
 		return myTiles[x + y * 4];
 	}
 
-	private void addTile() {
+	private static void addTile() {
 		List<Tile> list = availableSpace();
 		if (!availableSpace().isEmpty()) {
 			int index = (int) (Math.random() * list.size()) % list.size();
@@ -121,7 +122,7 @@ public class Game2048 extends JPanel {
 		}
 	}
 
-	private List<Tile> availableSpace() {
+	private static List<Tile> availableSpace() {
 		final List<Tile> list = new ArrayList<Tile>(16);
 		for (Tile t : myTiles) {
 			if (t.isEmpty()) {
@@ -131,11 +132,11 @@ public class Game2048 extends JPanel {
 		return list;
 	}
 
-	private boolean isFull() {
+	private static boolean isFull() {
 		return availableSpace().size() == 0;
 	}
 
-	boolean canMove() {
+	static boolean canMove() {
 		if (!isFull()) {
 			return true;
 		}
@@ -150,7 +151,7 @@ public class Game2048 extends JPanel {
 		return false;
 	}
 
-	private boolean compare(Tile[] line1, Tile[] line2) {
+	private static boolean compare(Tile[] line1, Tile[] line2) {
 		if (line1 == line2) {
 			return true;
 		} else if (line1.length != line2.length) {
@@ -165,7 +166,7 @@ public class Game2048 extends JPanel {
 		return true;
 	}
 
-	private Tile[] rotate(int angle) {
+	private static Tile[] rotate(int angle) {
 		Tile[] newTiles = new Tile[4 * 4];
 		int offsetX = 3, offsetY = 3;
 		if (angle == 90) {
@@ -187,7 +188,7 @@ public class Game2048 extends JPanel {
 		return newTiles;
 	}
 
-	private Tile[] moveLine(Tile[] oldLine) {
+	private static Tile[] moveLine(Tile[] oldLine) {
 		LinkedList<Tile> l = new LinkedList<Tile>();
 		for (int i = 0; i < 4; i++) {
 			if (!oldLine[i].isEmpty())
@@ -205,7 +206,7 @@ public class Game2048 extends JPanel {
 		}
 	}
 
-	private Tile[] mergeLine(Tile[] oldLine) {
+	private static Tile[] mergeLine(Tile[] oldLine) {
 		LinkedList<Tile> list = new LinkedList<Tile>();
 		for (int i = 0; i < 4 && !oldLine[i].isEmpty(); i++) {
 			int num = oldLine[i].value;
@@ -234,7 +235,7 @@ public class Game2048 extends JPanel {
 		}
 	}
 
-	private Tile[] getLine(int index) {
+	private static Tile[] getLine(int index) {
 		Tile[] result = new Tile[4];
 		for (int i = 0; i < 4; i++) {
 			result[i] = tileAt(i, index);
@@ -242,7 +243,7 @@ public class Game2048 extends JPanel {
 		return result;
 	}
 
-	private void setLine(int index, Tile[] re) {
+	private static void setLine(int index, Tile[] re) {
 		System.arraycopy(re, 0, myTiles, index * 4, 4);
 	}
 
@@ -344,4 +345,18 @@ public class Game2048 extends JPanel {
       return new Color(0xcdc1b4);
     }
   }
+	public static int getTile(int num) {
+		return myTiles[num].value;
+	}
+	public static void move(int num) {
+		if (num == 0) {
+			left();
+		} else if (num == 1) {
+			right();
+		} else if (num == 2) {
+			up();
+		} else if (num == 3) {
+			down();
+		}
+	}
 }

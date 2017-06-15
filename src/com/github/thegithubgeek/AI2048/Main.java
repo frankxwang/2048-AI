@@ -36,7 +36,7 @@ public class Main {
 				Thread.sleep(2000);
 			} catch (InterruptedException e) {}
 		    generation();
-		    System.out.println("GEN: "+GEN_NUM);
+		    System.out.println("GEN: "+i);
 	    }
 	    run(players[player], 100);
 	}
@@ -67,7 +67,7 @@ public class Main {
         for(int i=0; i < scores.length ; i++)
                 sum = sum + scores[i];
         double average = sum / scores.length;
-        System.out.println(average);
+        System.out.println("Mean Score: "+average);
 	    nextGen();
 	}
 	//kill off the bad players and reproduce

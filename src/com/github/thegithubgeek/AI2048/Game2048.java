@@ -283,22 +283,24 @@ public class Game2048 extends JPanel {
 			g.drawString(s, xOffset + (TILE_SIZE - w) / 2, yOffset + TILE_SIZE - (TILE_SIZE - h) / 2 - 2);
 
 		if (myLose) {// go till loses
-			g.setColor(new Color(255, 255, 255, 30));
-			g.fillRect(0, 0, getWidth(), getHeight());
-			g.setColor(new Color(78, 139, 202));
-			g.setFont(new Font(FONT_NAME, Font.BOLD, 48));
-			if (myWin) {
-				g.drawString("You won!", 68, 150);
-			}
-			if (myLose) {
-				resetGame();
-				Main.getScore();
-			}
-			if (myWin || myLose) {
-				g.setFont(new Font(FONT_NAME, Font.PLAIN, 16));
-				g.setColor(new Color(128, 128, 128, 128));
-				g.drawString("Press ESC to play again", 80, getHeight() - 40);
-			}
+			Main.getScore();
+			resetGame();
+//			g.setColor(new Color(255, 255, 255, 30));
+//			g.fillRect(0, 0, getWidth(), getHeight());
+//			g.setColor(new Color(78, 139, 202));
+//			g.setFont(new Font(FONT_NAME, Font.BOLD, 48));
+//			if (myWin) {
+//				g.drawString("You won!", 68, 150);
+//			}
+//			if (myLose) {
+//				resetGame();
+//				Main.getScore();
+//			}
+//			if (myWin || myLose) {
+//				g.setFont(new Font(FONT_NAME, Font.PLAIN, 16));
+//				g.setColor(new Color(128, 128, 128, 128));
+//				g.drawString("Press ESC to play again", 80, getHeight() - 40);
+//			}
 		}
 		g.setFont(new Font(FONT_NAME, Font.PLAIN, 18));
 		g.drawString("Score: " + myScore, 200, 365);
@@ -310,43 +312,46 @@ public class Game2048 extends JPanel {
 	}
 
 	static class Tile {
-    int value;
-
-    public Tile() {
-      this(0);
-    }
-
-    public Tile(int num) {
-      value = num;
-    }
-
-    public boolean isEmpty() {
-      return value == 0;
-    }
-
-    public Color getForeground() {
-      return value < 16 ? new Color(0x776e65) :  new Color(0xf9f6f2);
-    }
-
-    public Color getBackground() {
-      switch (value) {
-        case 2:    return new Color(0xeee4da);
-        case 4:    return new Color(0xede0c8);
-        case 8:    return new Color(0xf2b179);
-        case 16:   return new Color(0xf59563);
-        case 32:   return new Color(0xf67c5f);
-        case 64:   return new Color(0xf65e3b);
-        case 128:  return new Color(0xedcf72);
-        case 256:  return new Color(0xedcc61);
-        case 512:  return new Color(0xedc850);
-        case 1024: return new Color(0xedc53f);
-        case 2048: return new Color(0xedc22e);
-      }
-      return new Color(0xcdc1b4);
-    }
-  }
+	    int value;
+	    @Override
+	    public boolean equals(Object o){
+	    	return (value==((Tile)o).value);
+	    }
+	    public Tile() {
+	      this(0);
+	    }
+	
+	    public Tile(int num) {
+	      value = num;
+	    }
+	
+	    public boolean isEmpty() {
+	      return value == 0;
+	    }
+	
+	    public Color getForeground() {
+	      return value < 16 ? new Color(0x776e65) :  new Color(0xf9f6f2);
+	    }
+	
+	    public Color getBackground() {
+	    	switch (value) {
+		        case 2:    return new Color(0xeee4da);
+		        case 4:    return new Color(0xede0c8);
+		        case 8:    return new Color(0xf2b179);
+		        case 16:   return new Color(0xf59563);
+		        case 32:   return new Color(0xf67c5f);
+		        case 64:   return new Color(0xf65e3b);
+		        case 128:  return new Color(0xedcf72);
+		        case 256:  return new Color(0xedcc61);
+		        case 512:  return new Color(0xedc850);
+		        case 1024: return new Color(0xedc53f);
+		        case 2048: return new Color(0xedc22e);
+	    	}
+	    	return new Color(0xcdc1b4);
+	    }
+	}
 	public static int getTile(int num) {
-		return myTiles[num].value;
+			return myTiles[num].value;
 	}
 	public static void move(int num) {
 		if (num == 0) {
@@ -358,5 +363,6 @@ public class Game2048 extends JPanel {
 		} else if (num == 3) {
 			down();
 		}
+		Main.game2048.repaint();
 	}
 }

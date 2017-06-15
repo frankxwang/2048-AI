@@ -50,7 +50,7 @@ public class Player {
 		ArrayList<Float> newWeights = new ArrayList<>();
 		ArrayList<Integer> newDir = new ArrayList<>();
 		for (int i = 0; i < 16; i++) {
-			newWeights.add((float) (weights.get(i)+(Math.random()-0.5)*2*MAX_CHANGE+weights.get(i)));
+			newWeights.add((float) (weights.get(i)+(Math.random()-0.5)*2*MAX_CHANGE));
 			if(Math.random()<=DIR_CHANGE_PROB){
 				newDir.add((int) (Math.random()*4));
 			}else{

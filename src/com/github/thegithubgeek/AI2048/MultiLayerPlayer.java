@@ -18,6 +18,8 @@ public class MultiLayerPlayer {
 		Integer[] indexes = comparator.createIndexArray();
 		Arrays.sort(indexes, comparator);
 		
+		
+		
 		Tile[] curTiles = Game2048.myTiles.clone();
 		int i;
 		for(i=3; Arrays.equals(curTiles,Game2048.myTiles)&&i>=0; i--){
@@ -90,6 +92,9 @@ public class MultiLayerPlayer {
 				newInputs.add((int) (Math.random()*maxInput));
 			}
 			return new Node(newWeights, newInputs);
+		}
+		public void compute(Layer layer){
+			
 		}
 	}
 }

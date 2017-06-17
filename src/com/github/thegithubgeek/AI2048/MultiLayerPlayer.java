@@ -8,17 +8,48 @@ import com.github.thegithubgeek.AI2048.Player.ArrayIndexComparator;
 
 public class MultiLayerPlayer {
 	ArrayList<Layer> layers = new ArrayList<>();
+	public static final int MAX_INIT_LAYER_NUM = 2;
+	public static final int MAX_NODES = 2;
+	MultiLayerPlayer() {
+		int layerNum = (int) Math.random() * MAX_INIT_LAYER_NUM;
+		int prevNodeNum = 16;
+		for (int i = 0; i < layerNum; i++) {
+			layers.add(Layer.genRanLayer(prevNodeNum));
+			prevNodeNum = layers.get(i).nodes.size();
+		}
+	}
 	public static void main(String[] args) {
 	}
 	public void move(){
-		Float[] vote = {0f,0f,0f,0f};
+		ArrayList<Node> tileNode = new ArrayList<>();
+		ArrayList<Node> finNode = new ArrayList<>();
+		for (int i = 0; i < 16; i++) {
+			tileNode.add(new Node(null, null));
+			tileNode.get(i).value = Game2048.getTile(i);
+		}
+		for (int i = 0; i < 4; i++) {
+			finNode.add(new Node(null, null));
+			finNode.get(i).value = (float) (Math.random() * 4);
+		}
 		
+		Layer myTiles = new Layer(tileNode);
+		
+		for (int i = 0; i < layers.size(); i++) {
+			if (i == 0) {
+				layers.get(i).computeLayer(myTiles);
+				continue;
+			}
+			layers.get(i).computeLayer(layers.get(i-1));
+		}
+		
+		Layer fin = new FinalLayer(finNode);
+		fin.computeLayer(layers.get(layers.size()-1));
+		
+		Float[] vote = {0f,0f,0f,0f};
 		
 		ArrayIndexComparator<Float> comparator = new ArrayIndexComparator<Float>(vote);
 		Integer[] indexes = comparator.createIndexArray();
 		Arrays.sort(indexes, comparator);
-		
-		
 		
 		Tile[] curTiles = Game2048.myTiles.clone();
 		int i;
@@ -39,14 +70,38 @@ public class MultiLayerPlayer {
 		Layer(ArrayList<Node> nodes){
 			this.nodes = nodes;
 		}
-		public static Layer genRanLayer(int maxNodes, int prevLayerNodeNum){
+		public static Layer genRanLayer(int prevLayerNodeNum){
 			ArrayList<Node> nodes = new ArrayList<>();
-			int nodeNum = (int) (Math.random()*maxNodes);
+			int nodeNum = (int) (Math.random()*MAX_NODES);
 			for(int i=0; i<nodeNum; i++){
 				nodes.add(Node.genRanNode(prevLayerNodeNum));
 			}
 			return new Layer(nodes);
 		}
+		public Layer mutate(int prevLayerNodeNum){
+			ArrayList<Node> newNodes = new ArrayList<>();
+			for (int i = 0; i < nodes.size(); i++) {
+				if(!chance(NODE_REMOVAL_PROB)){
+					newNodes.add(nodes.get(i).mutate(prevLayerNodeNum));
+				}
+			}
+			if(chance(NODE_ADD_PROB)){
+				newNodes.add(Node.genRanNode(prevLayerNodeNum));
+			}
+			return new Layer(newNodes);
+		}
+		public void computeLayer(Layer prevLayer){
+			for (int i = 0; i < nodes.size(); i++) {
+				nodes.get(i).compute(prevLayer);
+			}
+		}
+	}
+	static class FinalLayer extends Layer{
+		FinalLayer(ArrayList<Node> nodes) {
+			super(nodes);
+			// TODO Auto-generated constructor stub
+		}
+		public static float NODE_ADD_PROB = 0f;
 		public Layer mutate(int prevLayerNodeNum){
 			ArrayList<Node> newNodes = new ArrayList<>();
 			for (int i = 0; i < nodes.size(); i++) {
@@ -94,7 +149,9 @@ public class MultiLayerPlayer {
 			return new Node(newWeights, newInputs);
 		}
 		public void compute(Layer layer){
-			
+			for (int i = 0; i < inputs.size(); i++) {
+				value += layer.nodes.get(inputs.get(i)).value * weights.get(i);
+			}
 		}
 	}
 }

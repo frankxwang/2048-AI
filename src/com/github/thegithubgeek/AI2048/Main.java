@@ -7,10 +7,10 @@ import com.github.thegithubgeek.AI2048.Player.ArrayIndexComparator;
 
 import java.util.*;
 public class Main {
-	static int NUM_PLAYERS = 1000;
-	static int KILL_RATE = 500;
-	static int NUM_TRIAL = 5;
-	static int GEN_NUM = 100;
+	static final int NUM_PLAYERS = 1000;
+	static final int KILL_RATE = 500;
+	static final int NUM_TRIAL = 5;
+	static final int GEN_NUM = 100;
 	static Player[] players = new Player[NUM_PLAYERS];
 	static Integer[] scores = new Integer[NUM_PLAYERS];
 	static boolean lost = false;

@@ -3,9 +3,9 @@ import java.util.*;
 
 import com.github.thegithubgeek.AI2048.Game2048.Tile;
 public class Player {
-	static int MAX_INIT_LAYER_NUM = 2;
-	static float MAX_CHANGE = 0.05f;
-	static float DIR_CHANGE_PROB = 0.01f;
+	static final int MAX_INIT_LAYER_NUM = 2;
+	static final float MAX_CHANGE = 0.05f;
+	static final float DIR_CHANGE_PROB = 0.01f;
 	ArrayList<Float> weights = new ArrayList<>();
 	ArrayList<Integer> dir = new ArrayList<>();
 	static int index = 0;

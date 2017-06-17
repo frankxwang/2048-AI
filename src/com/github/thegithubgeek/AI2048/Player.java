@@ -10,10 +10,10 @@ import com.github.thegithubgeek.AI2048.OldPlayer.ArrayIndexComparator;
 public class Player {
 	ArrayList<Layer> layers = new ArrayList<>();
 	FinalLayer finLayer;
-	public static final int MAX_INIT_LAYER_NUM = 3;
-	public static final float REMOVE_LAYER_PROB = 0.01f;
-	public static final float ADD_LAYER_PROB = 0.25f;
-	public static final int MAX_NODES = 4;
+	public static final int MAX_INIT_LAYER_NUM = 4;
+	public static final float REMOVE_LAYER_PROB = 0.001f;
+	public static final float ADD_LAYER_PROB = 0.01f;
+	public static final int MAX_NODES = 8;
 
 	public static float NODE_ADD_PROB = 0.5f;
 	public static float NODE_REMOVAL_PROB = 0.05f;

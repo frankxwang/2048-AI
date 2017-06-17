@@ -11,16 +11,16 @@ public class Player {
 	ArrayList<Layer> layers = new ArrayList<>();
 	FinalLayer finLayer;
 	public static final int MAX_INIT_LAYER_NUM = 3;
-	public static final float REMOVE_LAYER_PROB = 0.1f;
-	public static final float ADD_LAYER_PROB = 0.5f;
+	public static final float REMOVE_LAYER_PROB = 0.01f;
+	public static final float ADD_LAYER_PROB = 0.25f;
 	public static final int MAX_NODES = 4;
 
 	public static float NODE_ADD_PROB = 0.5f;
-	public static float NODE_REMOVAL_PROB = 0.1f;
+	public static float NODE_REMOVAL_PROB = 0.05f;
 	
 	public static float MAX_CHANGE = 0.1f;
 	public static float INPUT_ADD_PROB = 0.5f;
-	public static float INPUT_REMOVAL_PROB = 0.1f;
+	public static float INPUT_REMOVAL_PROB = 0.05f;
 	Player() {
 		int layerNum = (int) Math.random() * MAX_INIT_LAYER_NUM;
 		int prevNodeNum = 16;

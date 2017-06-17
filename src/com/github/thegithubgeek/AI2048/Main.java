@@ -3,7 +3,7 @@ package com.github.thegithubgeek.AI2048;
 import javax.swing.JFrame;
 import javax.swing.WindowConstants;
 
-import com.github.thegithubgeek.AI2048.Player.ArrayIndexComparator;
+import com.github.thegithubgeek.AI2048.OldPlayer.ArrayIndexComparator;
 
 import java.util.*;
 public class Main {
@@ -11,7 +11,7 @@ public class Main {
 	static final int KILL_RATE = 500;
 	static final int NUM_TRIAL = 5;
 	static final int GEN_NUM = 100;
-	static Player[] players = new Player[NUM_PLAYERS];
+	static OldPlayer[] players = new OldPlayer[NUM_PLAYERS];
 	static Integer[] scores = new Integer[NUM_PLAYERS];
 	static boolean lost = false;
 	static Game2048 game2048;
@@ -29,7 +29,7 @@ public class Main {
 	    game.setVisible(true);
 	    
 	    for(int i=0; i<NUM_PLAYERS; i++){
-	    	players[i]=Player.genRanPlayer();
+	    	players[i]=OldPlayer.genRanPlayer();
 	    }
 	    for(int i=0; i<GEN_NUM; i++){
 		    try {
@@ -44,7 +44,7 @@ public class Main {
 		for (int i=0; i<players.length; i++) {
 			scores[i] = 0;
 			for (int j = 0; j < NUM_TRIAL; j++) {
-				Player player = players[i];
+				OldPlayer player = players[i];
 				run(player, 0);
 				scores[i] += Game2048.myScore;
 				game2048.resetGame();
@@ -76,7 +76,7 @@ public class Main {
 			players[i] = players[i+KILL_RATE].mutate();
 		}
 	}
-	public static void run(Player p, int delay){
+	public static void run(OldPlayer p, int delay){
 		while(!lost){
 			p.move();
 			try {

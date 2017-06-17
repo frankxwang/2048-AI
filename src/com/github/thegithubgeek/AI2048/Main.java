@@ -11,7 +11,7 @@ public class Main {
 	static final int KILL_RATE = 500;
 	static final int NUM_TRIAL = 5;
 	static final int GEN_NUM = 100;
-	static OldPlayer[] players = new OldPlayer[NUM_PLAYERS];
+	static Player[] players = new Player[NUM_PLAYERS];
 	static Integer[] scores = new Integer[NUM_PLAYERS];
 	static boolean lost = false;
 	static Game2048 game2048;
@@ -29,22 +29,25 @@ public class Main {
 	    game.setVisible(true);
 	    
 	    for(int i=0; i<NUM_PLAYERS; i++){
-	    	players[i]=OldPlayer.genRanPlayer();
+	    	players[i]= new Player();
 	    }
 	    for(int i=0; i<GEN_NUM; i++){
-		    try {
-				Thread.sleep(2000);
-			} catch (InterruptedException e) {}
+//		    try {
+//				Thread.sleep(2000);
+//			} catch (InterruptedException e) {}
 		    generation();
 		    System.out.println("GEN: "+i);
 	    }
+	    try {
+			Thread.sleep(20000);
+		} catch (InterruptedException e) {}
 	    run(players[player], 100);
 	}
 	public static void generation(){
 		for (int i=0; i<players.length; i++) {
 			scores[i] = 0;
 			for (int j = 0; j < NUM_TRIAL; j++) {
-				OldPlayer player = players[i];
+				Player player = players[i];
 				run(player, 0);
 				scores[i] += Game2048.myScore;
 				game2048.resetGame();
@@ -52,7 +55,7 @@ public class Main {
 			}
 			scores[i]/=NUM_TRIAL;
 			if(i%100==0){
-				System.out.println(i);
+//				System.out.println(i);
 			}
 		}
 	    ArrayIndexComparator<Integer> comparator = new ArrayIndexComparator<Integer>(scores);
@@ -75,8 +78,11 @@ public class Main {
 		for (int i = 0; i < KILL_RATE; i++) {
 			players[i] = players[i+KILL_RATE].mutate();
 		}
+		for (int i = 0; i < KILL_RATE; i++) {
+			players[i+KILL_RATE] = players[i+KILL_RATE].mutate();
+		}
 	}
-	public static void run(OldPlayer p, int delay){
+	public static void run(Player p, int delay){
 		while(!lost){
 			p.move();
 			try {

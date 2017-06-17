@@ -2,14 +2,25 @@ package com.github.thegithubgeek.AI2048;
 
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.Iterator;
 
 import com.github.thegithubgeek.AI2048.Game2048.Tile;
 import com.github.thegithubgeek.AI2048.OldPlayer.ArrayIndexComparator;
 
 public class Player {
 	ArrayList<Layer> layers = new ArrayList<>();
-	public static final int MAX_INIT_LAYER_NUM = 2;
-	public static final int MAX_NODES = 2;
+	FinalLayer finLayer;
+	public static final int MAX_INIT_LAYER_NUM = 3;
+	public static final float REMOVE_LAYER_PROB = 0.1f;
+	public static final float ADD_LAYER_PROB = 0.5f;
+	public static final int MAX_NODES = 4;
+
+	public static float NODE_ADD_PROB = 0.5f;
+	public static float NODE_REMOVAL_PROB = 0.1f;
+	
+	public static float MAX_CHANGE = 0.1f;
+	public static float INPUT_ADD_PROB = 0.5f;
+	public static float INPUT_REMOVAL_PROB = 0.1f;
 	Player() {
 		int layerNum = (int) Math.random() * MAX_INIT_LAYER_NUM;
 		int prevNodeNum = 16;
@@ -17,19 +28,35 @@ public class Player {
 			layers.add(Layer.genRanLayer(prevNodeNum));
 			prevNodeNum = layers.get(i).nodes.size();
 		}
+		finLayer = new FinalLayer(new ArrayList<Node>());
+		for (int i = 0; i < 4; i++) {
+			finLayer.nodes.add(Node.genRanNode(prevNodeNum));
+		}
 	}
-	public static void main(String[] args) {
+	Player(ArrayList<Layer> layers, FinalLayer finLayer){
+		this.layers = layers;
+		this.finLayer = finLayer;
+	}
+	public Player mutate(){
+		int prevNodeNum = 16;
+		ArrayList<Layer> newLayers = new ArrayList<>();
+		for (int i = 0; i < layers.size(); i++) {
+			if(!chance(REMOVE_LAYER_PROB)){
+				newLayers.add(layers.get(i).mutate(prevNodeNum));
+				prevNodeNum = layers.get(i).nodes.size();
+			}
+		}
+		if(chance(ADD_LAYER_PROB)){
+			newLayers.add(Layer.genRanLayer(prevNodeNum));
+		}
+		FinalLayer newFinLayer = finLayer.mutate(prevNodeNum);
+		return new Player(newLayers, newFinLayer);
 	}
 	public void move(){
 		ArrayList<Node> tileNode = new ArrayList<>();
-		ArrayList<Node> finNode = new ArrayList<>();
 		for (int i = 0; i < 16; i++) {
 			tileNode.add(new Node(null, null));
 			tileNode.get(i).value = Game2048.getTile(i);
-		}
-		for (int i = 0; i < 4; i++) {
-			finNode.add(new Node(null, null));
-			finNode.get(i).value = (float) (Math.random() * 4);
 		}
 		
 		Layer myTiles = new Layer(tileNode);
@@ -41,13 +68,12 @@ public class Player {
 			}
 			layers.get(i).computeLayer(layers.get(i-1));
 		}
-		
-		Layer fin = new FinalLayer(finNode);
-		fin.computeLayer(layers.get(layers.size()-1));
+		if(layers.size()>0)
+			finLayer.computeLayer(layers.get(layers.size()-1));
 		
 		Float[] vote = {0f,0f,0f,0f};
 		for(int i=0; i<vote.length; i++){
-			vote[i] = fin.nodes.get(i).value;
+			vote[i] = finLayer.nodes.get(i).value;
 		}
 		
 		ArrayIndexComparator<Float> comparator = new ArrayIndexComparator<Float>(vote);
@@ -67,15 +93,13 @@ public class Player {
 		return (Math.random()<=prob);
 	}
 	static class Layer{
-		public static float NODE_ADD_PROB = 0.05f;
-		public static float NODE_REMOVAL_PROB = 0.05f;
 		ArrayList<Node> nodes;
 		Layer(ArrayList<Node> nodes){
 			this.nodes = nodes;
 		}
 		public static Layer genRanLayer(int prevLayerNodeNum){
 			ArrayList<Node> nodes = new ArrayList<>();
-			int nodeNum = (int) (Math.random()*MAX_NODES);
+			int nodeNum = (int) (Math.random()*MAX_NODES)+1;
 			for(int i=0; i<nodeNum; i++){
 				nodes.add(Node.genRanNode(prevLayerNodeNum));
 			}
@@ -84,7 +108,7 @@ public class Player {
 		public Layer mutate(int prevLayerNodeNum){
 			ArrayList<Node> newNodes = new ArrayList<>();
 			for (int i = 0; i < nodes.size(); i++) {
-				if(!chance(NODE_REMOVAL_PROB)){
+				if(!chance(NODE_REMOVAL_PROB)&&nodes.size()>1){
 					newNodes.add(nodes.get(i).mutate(prevLayerNodeNum));
 				}
 			}
@@ -105,23 +129,21 @@ public class Player {
 			// TODO Auto-generated constructor stub
 		}
 		public static float NODE_ADD_PROB = 0f;
-		public Layer mutate(int prevLayerNodeNum){
+		public static float NODE_REMOVAL_PROB = 0f;
+		public FinalLayer mutate(int prevLayerNodeNum){
 			ArrayList<Node> newNodes = new ArrayList<>();
 			for (int i = 0; i < nodes.size(); i++) {
-				if(!chance(NODE_REMOVAL_PROB)){
+				if(!chance(NODE_REMOVAL_PROB)&&nodes.size()>1){
 					newNodes.add(nodes.get(i).mutate(prevLayerNodeNum));
 				}
 			}
 			if(chance(NODE_ADD_PROB)){
 				newNodes.add(Node.genRanNode(prevLayerNodeNum));
 			}
-			return new Layer(newNodes);
+			return new FinalLayer(newNodes);
 		}
 	}
 	static class Node{
-		public static float MAX_CHANGE = 0.1f;
-		public static float INPUT_REMOVAL_PROB = 0.05f;
-		public static float INPUT_ADD_PROB = 0.05f;
 		ArrayList<Float> weights;
 		ArrayList<Integer> inputs;
 		float value = 0;
@@ -139,8 +161,8 @@ public class Player {
 		public Node mutate(int maxInput){
 			ArrayList<Float> newWeights = new ArrayList<>();
 			ArrayList<Integer> newInputs = new ArrayList<>();
-			for (int i = 0; i < weights.size(); i++) {
-				if(!chance(INPUT_REMOVAL_PROB)){
+			for (int i = 0; i < inputs.size(); i++) {
+				if(!(chance(INPUT_REMOVAL_PROB)&&inputs.size()>1)){
 					newWeights.add((float) (weights.get(i)+(Math.random()-0.5)*2*MAX_CHANGE));
 					newInputs.add(inputs.get(i));
 				}
@@ -152,8 +174,18 @@ public class Player {
 			return new Node(newWeights, newInputs);
 		}
 		public void compute(Layer layer){
+			ArrayList<Integer> invalid = new ArrayList<>();
 			for (int i = 0; i < inputs.size(); i++) {
+				if(inputs.get(i)>=layer.nodes.size()){
+					invalid.add(i);
+					continue;
+				}
 				value += layer.nodes.get(inputs.get(i)).value * weights.get(i);
+			}
+			for (Iterator<Integer> iterator = invalid.iterator(); iterator.hasNext();) {
+				Integer val = iterator.next();
+				inputs.remove(val);
+				weights.remove(val);
 			}
 		}
 	}

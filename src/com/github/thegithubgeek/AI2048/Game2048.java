@@ -40,15 +40,19 @@ public class Game2048 extends JPanel {
 					switch (e.getKeyCode()) {
 					case KeyEvent.VK_LEFT:
 						left();
+						repaint();
 						break;
 					case KeyEvent.VK_RIGHT:
 						right();
+						repaint();
 						break;
 					case KeyEvent.VK_DOWN:
 						down();
+						repaint();
 						break;
 					case KeyEvent.VK_UP:
 						up();
+						repaint();
 						break;
 					}
 				}
@@ -57,7 +61,6 @@ public class Game2048 extends JPanel {
 					myLose = true;
 				}
 
-				repaint();
 			}
 		});
 		resetGame();

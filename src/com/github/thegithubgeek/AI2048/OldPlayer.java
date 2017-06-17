@@ -20,7 +20,7 @@ public class OldPlayer {
 		ArrayList<Float> weights = new ArrayList<>();
 		ArrayList<Integer> dir = new ArrayList<>();
 		for (int i = 0; i < 16; i++) {
-			weights.add((float) Math.random());
+			weights.add((float) (Math.random()-0.5)*2);
 			dir.add((int)( Math.random() * 4));
 		}
 		return new OldPlayer(weights, dir);

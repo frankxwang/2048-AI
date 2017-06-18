@@ -16,11 +16,11 @@ public class Player {
 	public static final int MAX_NODES = 8;
 
 	public static float NODE_ADD_PROB = 0.5f;
-	public static float NODE_REMOVAL_PROB = 0.05f;
+	public static float NODE_REMOVAL_PROB = 0.005f;
 	
 	public static float MAX_CHANGE = 0.1f;
 	public static float INPUT_ADD_PROB = 0.5f;
-	public static float INPUT_REMOVAL_PROB = 0.05f;
+	public static float INPUT_REMOVAL_PROB = 0.005f;
 	Player() {
 		int layerNum = (int) Math.random() * MAX_INIT_LAYER_NUM;
 		int prevNodeNum = 16;

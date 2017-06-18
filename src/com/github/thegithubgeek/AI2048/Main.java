@@ -10,8 +10,8 @@ import java.util.*;
 public class Main {
 	static final int NUM_PLAYERS = 1000;
 	static final int KILL_RATE = 500;
-	static final int NUM_TRIAL = 6;
-	static final int GEN_NUM = 1000;
+	static final int NUM_TRIAL = 5;
+	static final int GEN_NUM = 100;
 	static Player[] players = new Player[NUM_PLAYERS];
 	static Integer[] scores = new Integer[NUM_PLAYERS];
 	static boolean lost = false;

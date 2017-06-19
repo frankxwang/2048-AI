@@ -10,10 +10,11 @@ import java.util.List;
 
 /**
  * @author Konstantin Bulenkov
+ * @author Franklin Wang, Riley Kong
  */
 @SuppressWarnings("serial")
 public class Game2048 extends JPanel {
-	private static final Color BG_COLOR = new Color(0xbbada0);
+	private static final Color BG_COLOR = new Color(170, 170, 170);
 	private static final String FONT_NAME = "Arial";
 	private static final int TILE_SIZE = 64;
 	private static final int TILES_MARGIN = 16;
@@ -22,6 +23,10 @@ public class Game2048 extends JPanel {
 	static boolean myWin = false;
 	static boolean myLose = false;
 	static int myScore = 0;
+	public static double meanScore = 0;
+	static double prevScore = 0;
+	public static double difference = 0;
+	public static double gen = 0;
 	
 	public Game2048() {
 		setPreferredSize(new Dimension(340, 400));
@@ -40,15 +45,19 @@ public class Game2048 extends JPanel {
 					switch (e.getKeyCode()) {
 					case KeyEvent.VK_LEFT:
 						left();
+						repaint();
 						break;
 					case KeyEvent.VK_RIGHT:
 						right();
+						repaint();
 						break;
 					case KeyEvent.VK_DOWN:
 						down();
+						repaint();
 						break;
 					case KeyEvent.VK_UP:
 						up();
+						repaint();
 						break;
 					}
 				}
@@ -56,7 +65,7 @@ public class Game2048 extends JPanel {
 				if (!myWin && !canMove()) {
 					myLose = true;
 				}
-				repaint();
+
 			}
 		});
 		resetGame();
@@ -254,6 +263,12 @@ public class Game2048 extends JPanel {
 		for (int y = 0; y < 4; y++) {
 			for (int x = 0; x < 4; x++) {
 				drawTile(g, myTiles[x + y * 4], x, y);
+				g.setColor(new Color(100, 100, 100));
+				g.setFont(new Font(FONT_NAME, Font.PLAIN, 18));
+				g.drawString("GEN: " + gen, 335, 245);
+				g.drawString("Prev: " + prevScore, 335, 270);
+				g.drawString("Score: " + meanScore, 335, 295);
+				g.drawString("Diff: " + difference, 335, 320);
 			}
 		}
 	}
@@ -301,8 +316,8 @@ public class Game2048 extends JPanel {
 //				g.drawString("Press ESC to play again", 80, getHeight() - 40);
 //			}
 		}
-		g.setFont(new Font(FONT_NAME, Font.PLAIN, 18));
-		g.drawString("Score: " + myScore, 200, 365);
+//		g.setFont(new Font(FONT_NAME, Font.PLAIN, 18));
+//		g.drawString("Score: " + myScore, 200, 365);
 
 	}
 
@@ -362,6 +377,9 @@ public class Game2048 extends JPanel {
 		} else if (num == 3) {
 			down();
 		}
-		Main.game2048.repaint();
+		try {
+			Main.game2048.repaint();
+		} catch (Exception e) {
+		}
 	}
 }

@@ -10,8 +10,8 @@ import java.util.*;
 public class Main {
 	static final int NUM_PLAYERS = 1000;
 	static final int KILL_RATE = 500;
-	static final int NUM_TRIAL = 6;
-	static final int GEN_NUM = 1000;
+	static final int NUM_TRIAL = 5;
+	static final int GEN_NUM = 100;
 	static Player[] players = new Player[NUM_PLAYERS];
 	static Integer[] scores = new Integer[NUM_PLAYERS];
 	static boolean lost = false;
@@ -112,7 +112,10 @@ public class Main {
 	                sum = sum + scores[i];
 	        double average = sum / scores.length;
 	        System.out.println("Mean Score: "+average);
-		    nextGen();
+	        Game2048.prevScore = Game2048.meanScore;
+		    Game2048.meanScore = average;
+		    Game2048.difference = Game2048.prevScore-Game2048.meanScore;
+	        nextGen();
 		}
 		//kill off the bad players and reproduce
 		public static void nextGen(){

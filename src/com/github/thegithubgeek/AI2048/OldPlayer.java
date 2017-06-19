@@ -2,11 +2,6 @@ package com.github.thegithubgeek.AI2048;
 import java.util.*;
 
 import com.github.thegithubgeek.AI2048.Game2048.Tile;
-/**
- * @author Franklin Wang, Riley Kong
- * @version 1.2
- * @see Player
- */
 public class OldPlayer {
 	static final int MAX_INIT_LAYER_NUM = 2;
 	static final float MAX_CHANGE = 0.05f;

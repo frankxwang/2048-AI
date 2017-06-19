@@ -112,10 +112,7 @@ public class Main {
 	                sum = sum + scores[i];
 	        double average = sum / scores.length;
 	        System.out.println("Mean Score: "+average);
-	        Game2048.prevScore = Game2048.meanScore;
-		    Game2048.meanScore = average;
-		    Game2048.difference = Game2048.prevScore-Game2048.meanScore;
-	        nextGen();
+		    nextGen();
 		}
 		//kill off the bad players and reproduce
 		public static void nextGen(){

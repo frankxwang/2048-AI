@@ -98,6 +98,7 @@ public class Main {
 				if(i%100==0){
 //					System.out.println(i);
 				}
+				Game2048.difference = i;
 			}
 		    ArrayIndexComparator<Integer> comparator = new ArrayIndexComparator<Integer>(scores);
 			Integer[] indexes = comparator.createIndexArray();
@@ -112,6 +113,10 @@ public class Main {
 	                sum = sum + scores[i];
 	        double average = sum / scores.length;
 	        System.out.println("Mean Score: "+average);
+	        Game2048.prevScore = Game2048.meanScore;
+		    Game2048.meanScore = average;
+		    Game2048.difference = Game2048.prevScore-Game2048.meanScore;
+	        
 		    nextGen();
 		}
 		//kill off the bad players and reproduce

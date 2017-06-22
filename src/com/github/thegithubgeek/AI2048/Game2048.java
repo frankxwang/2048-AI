@@ -4,6 +4,7 @@ import javax.swing.*;
 import java.awt.*;
 import java.awt.event.KeyAdapter;
 import java.awt.event.KeyEvent;
+import java.text.DecimalFormat;
 import java.util.ArrayList;
 import java.util.LinkedList;
 import java.util.List;
@@ -25,11 +26,13 @@ public class Game2048 extends JPanel {
 	static int myScore = 0;
 	public static double meanScore = 0;
 	static double prevScore = 0;
-	public static double difference = 0;
-	public static double gen = 0;
+	public static double diff = 0;
+	public static double gen = 1;
+	DecimalFormat reg = new DecimalFormat("######");
+	DecimalFormat fmt = new DecimalFormat("+###;-#");
 	
 	public Game2048() {
-		setPreferredSize(new Dimension(340, 400));
+		setPreferredSize(new Dimension(500, 340));
 		setFocusable(true);
 		addKeyListener(new KeyAdapter() {
 			@Override
@@ -254,23 +257,26 @@ public class Game2048 extends JPanel {
 	private static void setLine(int index, Tile[] re) {
 		System.arraycopy(re, 0, myTiles, index * 4, 4);
 	}
+	public Dimension getPreferredSize() {
+		return new Dimension(340, 340);
+	}
 
 	@Override
 	public void paint(Graphics g) {
 		super.paint(g);
 		g.setColor(BG_COLOR);
-		g.fillRect(0, 0, this.getSize().width, this.getSize().height);
+		g.fillRect(0, 0, getSize().width, getSize().height);
 		for (int y = 0; y < 4; y++) {
 			for (int x = 0; x < 4; x++) {
 				drawTile(g, myTiles[x + y * 4], x, y);
-				g.setColor(new Color(100, 100, 100));
-				g.setFont(new Font(FONT_NAME, Font.PLAIN, 18));
-				g.drawString("GEN: " + gen, 335, 245);
-				g.drawString("Prev: " + prevScore, 335, 270);
-				g.drawString("Score: " + meanScore, 335, 295);
-				g.drawString("Diff: " + difference, 335, 320);
 			}
 		}
+		g.setColor(new Color(100, 100, 100));
+		g.setFont(new Font(FONT_NAME, Font.PLAIN, 18));
+		g.drawString("GEN: " + reg.format(gen), 340, 245);
+		g.drawString("Prev: " + reg.format(prevScore), 340, 270);
+		g.drawString("Score: " + reg.format(meanScore), 340, 295);
+		g.drawString("Diff: " + fmt.format(diff), 340, 320);
 	}
 
 	private void drawTile(Graphics g2, Tile tile, int x, int y) {
@@ -368,17 +374,15 @@ public class Game2048 extends JPanel {
 			return myTiles[num].value;
 	}
 	public static void move(int num) {
-		if (num == 0) {
-			left();
-		} else if (num == 1) {
-			right();
-		} else if (num == 2) {
-			up();
-		} else if (num == 3) {
-			down();
+		switch (num) {
+			case 0: left();
+			case 1: right();
+			case 2: up();
+			case 3: down();
 		}
 		try {
 			Main.game2048.repaint();
+			Main.disp.repaint();
 		} catch (Exception e) {
 		}
 	}

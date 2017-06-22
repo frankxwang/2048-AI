@@ -50,6 +50,7 @@ public class Player {
 			newLayers.add(Layer.genRanLayer(prevNodeNum));
 		}
 		FinalLayer newFinLayer = finLayer.mutate(prevNodeNum);
+		Main.dispGraph.run();
 		return new Player(newLayers, newFinLayer);
 	}
 	public void move(){
@@ -75,7 +76,7 @@ public class Player {
 		for(int i=0; i<vote.length; i++){
 			vote[i] = finLayer.nodes.get(i).value;
 		}
-		
+		Main.dispGraph.run();
 		ArrayIndexComparator<Float> comparator = new ArrayIndexComparator<Float>(vote);
 		Integer[] indexes = comparator.createIndexArray();
 		Arrays.sort(indexes, comparator);
@@ -84,9 +85,11 @@ public class Player {
 		int i;
 		for(i=3; Arrays.equals(curTiles,Game2048.myTiles)&&i>=0; i--){
 			Game2048.move(indexes[i]);
+			Main.dispGraph.run();
 		}
 		if(i==-1){
 			Main.lost=true;
+			Main.dispGraph.run();
 		}
 	}
 	public static boolean chance(float prob){
@@ -115,6 +118,7 @@ public class Player {
 			if(chance(NODE_ADD_PROB)){
 				newNodes.add(Node.genRanNode(prevLayerNodeNum));
 			}
+			Main.dispGraph.run();
 			return new Layer(newNodes);
 		}
 		public void computeLayer(Layer prevLayer){
@@ -140,6 +144,7 @@ public class Player {
 			if(chance(NODE_ADD_PROB)){
 				newNodes.add(Node.genRanNode(prevLayerNodeNum));
 			}
+			Main.dispGraph.run();
 			return new FinalLayer(newNodes);
 		}
 	}
@@ -171,6 +176,7 @@ public class Player {
 				newWeights.add((float) Math.random());
 				newInputs.add((int) (Math.random()*maxInput));
 			}
+			Main.dispGraph.run();
 			return new Node(newWeights, newInputs);
 		}
 		public void compute(Layer layer){

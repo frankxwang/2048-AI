@@ -317,8 +317,8 @@ public class Main {
 						
 						g.drawString(coord.format(median.size()).toString(), 278, 315);
 						g.drawString(coord.format(median.size()*0.75).toString(), 221, 315);
-						g.drawString(coord.format(median.size()*0.75).toString(), 163, 315);
-						g.drawString(coord.format(median.size()*0.75).toString(), 106, 315);
+						g.drawString(coord.format(median.size()*0.5).toString(), 163, 315);
+						g.drawString(coord.format(median.size()*0.25).toString(), 106, 315);
 					}
 				}
 			}

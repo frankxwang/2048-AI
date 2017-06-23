@@ -22,7 +22,7 @@ public class Main {
 	static boolean running = false;
 	static Thread evolve;
 	static ArrayList<Double> scoreList = new ArrayList<>();
-	static ArrayList<Integer> best = new ArrayList<>();
+	static ArrayList<Double> best = new ArrayList<>();
 	
 	public static void main(String[] args) {
 		System.err.close();// turn off errors
@@ -40,11 +40,7 @@ public class Main {
 		buttons.add(start);
 		buttons.add(pause);
 		buttons.add(cont);
-
-		scoreList.add(234d);
-		scoreList.add(345d);
-		scoreList.add(1122d);
-
+		
 		start.addActionListener(new ActionListener() {
 			@Override
 			public void actionPerformed(ActionEvent e) {
@@ -73,11 +69,15 @@ public class Main {
 		game.add(buttons, BorderLayout.NORTH);
 		game2048 = new Game2048();
 		game.add(game2048, BorderLayout.CENTER);
-		disp = new dispGraph(scoreList);
+		disp = new dispGraph(scoreList, best);
 		game.add(disp, BorderLayout.EAST);
 		game.pack();
 		game.setLocationRelativeTo(null);
 		game.setVisible(true);
+		
+//		scoreList.add(742d);
+//		scoreList.add(784d);
+//		scoreList.add(790d);
 	}
 
 	public static class Evolve extends Thread {
@@ -139,8 +139,7 @@ public class Main {
 				sum = sum + scores[i];
 			double average = sum / scores.length;
 			scoreList.add(average);
-			System.out.println("ADDED");
-			best.add(max);
+			best.add((double) max);
 			System.out.println("Mean Score: " + average);
 			Game2048.prevScore = Game2048.meanScore;
 			Game2048.meanScore = average;
@@ -185,41 +184,98 @@ public class Main {
 	
 	public static class dispGraph extends JPanel {
 		ArrayList<Double> median = new ArrayList<Double>();
-		dispGraph(ArrayList<Double> i) {
+		ArrayList<Double> best = new ArrayList<Double>();
+		ArrayList<Double> scale = new ArrayList<Double>();
+		dispGraph(ArrayList<Double> i, ArrayList<Double> j) {
 			setSize(new Dimension(340, 340));
 			median = i;
+			best = j;
+			scale = i;
+			scale.addAll(j);
 		}
 
 		public Dimension getPreferredSize(){
 			return new Dimension(340, 340);
 		}
 		
-		public double getYNum() {
-			return Collections.max(median).doubleValue();
+		public double getDiffAbs(ArrayList<Double> arr) {
+			if (arr.size() <= 1) {
+				return 1;
+			} else {
+				return Collections.max(arr).doubleValue() - Collections.min(arr).doubleValue();
+			}
 		}
 		
+		public int getSizeAbs(ArrayList<Double> arr) {
+			if (arr.size() <= 1) {
+				return 1;
+			} else {
+				return arr.size() - 1;
+			}
+		}
 		
 		public void paintComponent(Graphics g) {
-			g.setColor(Color.WHITE);
-			g.fillRect(0, 0, 340, 340);
 			g.setColor(Color.GRAY);
-			g.fillRect(0, 0, 340, 10);
-			g.fillRect(0, 330, 340, 10);
-			g.fillRect(0, 10, 10, 320);
-			g.fillRect(330, 10, 10, 320);
+			g.fillRect(0, 0, 340, 340);
+			
+			g.setColor(Color.WHITE);
+			g.fillRoundRect(10, 10, 320, 320, 20, 20);
+			
 			g.setColor(Color.DARK_GRAY);
 			g.setFont(new Font("SansSerif", Font.PLAIN, 18));
 			g.drawString("Graph of Results", 100, 40);
+			
+			g.setColor(Color.GRAY);
+			g.fillRect(50, 60, 2, 240);
+			g.fillRect(40, 290, 240, 2);
+			
 			g.setColor(Color.LIGHT_GRAY);
-			g.fillRect(50, 60, 2, 230);
-			g.fillRect(50, 290, 230, 2);
+			g.fillRect(40, 60, 240, 2);
+			g.fillRect(40, 117, 240, 2);
+			g.fillRect(40, 175, 240, 2);
+			g.fillRect(40, 232, 240, 2);
+			
+			g.fillRect(108, 60, 2, 240);
+			g.fillRect(165, 60, 2, 240);
+			g.fillRect(223, 60, 2, 240);
+			g.fillRect(280, 60, 2, 240);
+			
+			if (median.size() == 0) {
+				g.setFont(new Font("Arial", Font.ROMAN_BASELINE, 48));
+				g.fillRoundRect(110, 145, 110, 58, 25, 25);
+				g.setColor(Color.WHITE);
+				g.drawString("N/A", 125, 190);
+			}
 			for (int i = 0; i < median.size(); i++) {
+				double min = Collections.min(scale).doubleValue();
+				int regX = (int) Math.ceil(i*(230d/getSizeAbs(median)));
+				int regY = (int) (-((median.get(i) - min)/getDiffAbs(scale))*230);
+				int regYB = (int) (-((best.get(i) - min)/getDiffAbs(scale))*230);
+				
+//				System.out.println("(" + regX + ", " + regY + ")");
+				
+				g.setColor(Color.BLUE);
+				g.fillOval(regX + 48, regY+288, 5, 5);
 				g.setColor(Color.BLACK);
-				g.fillOval((int) (i*(230/(median.size()-1)) + 45), (int) (-(median.get(i)/getYNum())*230+285), 10, 10);
+				g.fillOval(regX + 47, regYB+287, 5, 5);
+				g.setColor(Color.GRAY);
+				g.setFont(new Font("Arial", Font.PLAIN, 12));
+				g.drawString((int)min+"", 15, 296);
 				if (median.size() > 1) {
 					if (i > 0) {
-						g.drawLine((int) ((i-1)*(230/(median.size()-1)) + 50), (int) (-(median.get(i-1)/getYNum())*230+290), 
-								(int) (i*(230/(median.size()-1)) + 50), (int) (-(median.get(i)/getYNum())*230+290));
+						int regXP = (int) Math.ceil((i-1)*(230d/getSizeAbs(median)));
+						int regYP = (int) (-((median.get(i-1) - min)/getDiffAbs(scale))*230);
+						int regYPB = (int) (-((best.get(i-1) - min)/getDiffAbs(scale))*230);
+						
+						g.setColor(Color.BLUE);
+						g.drawLine(regX + 50, regY+290, regXP + 50, regYP+290);
+						g.setColor(Color.BLACK);
+						g.drawLine(regX + 50, regYB+290, regXP + 50, regYPB+290);
+						g.setColor(Color.GRAY);
+						g.drawString((int)(min+getDiffAbs(scale))+"", 15, 66);
+						g.drawString((int)(min+0.75*getDiffAbs(scale))+"", 15, 123);
+						g.drawString((int)(min+0.5*getDiffAbs(scale))+"", 15, 181);
+						g.drawString((int)(min+0.25*getDiffAbs(scale))+"", 15, 238);
 					}
 				}
 			}

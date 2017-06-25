@@ -6,8 +6,10 @@ import com.github.thegithubgeek.AI2048.OldPlayer.ArrayIndexComparator;
 
 import java.awt.*;
 import java.awt.event.*;
+import java.io.*;
 import java.text.DecimalFormat;
 import java.util.*;
+import java.util.concurrent.*;
 
 public class Main {
 	static final int NUM_PLAYERS = 1000;
@@ -25,6 +27,7 @@ public class Main {
 	static Thread evolve;
 	static ArrayList<Double> scoreList = new ArrayList<>();
 	static ArrayList<Double> best = new ArrayList<>();
+	static CountDownLatch done = new CountDownLatch(1);
 	
 	public static void main(String[] args) {
 //		System.err.close();// turn off errors
@@ -39,6 +42,7 @@ public class Main {
 		JButton start = new JButton("Start");
 		JButton pause = new JButton("Pause");
 		JButton cont = new JButton("Continue");
+		JButton runBest = new JButton("Run Best");
 		JPanel graphCon = new JPanel();
 		JButton med = new JButton("Median (default)");
 		JButton bestb = new JButton("Best");
@@ -46,6 +50,7 @@ public class Main {
 		buttons.add(start);
 		buttons.add(pause);
 		buttons.add(cont);
+		buttons.add(runBest);
 		
 		graphCon.add(med);
 		graphCon.add(bestb);
@@ -64,15 +69,29 @@ public class Main {
 		pause.addActionListener(new ActionListener() {
 			@Override
 			public void actionPerformed(ActionEvent e) {
-				evolve.interrupt();
+//				evolve.interrupt();
 				running = false;
-				evolve.notify();
+//				evolve.notify();
 			}
 		});
 
 		cont.addActionListener(new ActionListener() {
 			@Override
 			public void actionPerformed(ActionEvent e) {
+				running = true;
+				done.countDown();
+			}
+		});
+		
+		runBest.addActionListener(new ActionListener(){
+			@Override
+			public void actionPerformed(ActionEvent e) {
+				new Thread(new Runnable(){
+					@Override
+					public void run() {
+						runBest();
+					}
+				}).start();
 			}
 		});
 		
@@ -108,22 +127,28 @@ public class Main {
 	public static class Evolve extends Thread {
 
 		public void run() {
-			synchronized (this) {
-				while (!running) {
-					try {
-						wait();
-					} catch (InterruptedException e) {
-						// TODO Auto-generated catch block
-						e.printStackTrace();
-					}
-				}
-			}
+//			synchronized (this) {
+//				while (!running) {
+//					try {
+//						wait();
+//					} catch (InterruptedException e) {
+//						// TODO Auto-generated catch block
+//						e.printStackTrace();
+//					}
+//				}
+//			}
 			for (int i = 0; i < NUM_PLAYERS; i++) {
 				players[i] = new Player();
 			}
 			for (int i = 0; i < GEN_NUM; i++) {
 				// Thread.sleep(2000);
 				// } catch (InterruptedException e) {}
+				if(!running){
+					try {
+						done = new CountDownLatch(1);
+						done.await();
+					} catch (InterruptedException e) {}
+				}
 				Main.dispGraph.run();
 				generation();
 				System.out.println("GEN: " + i);
@@ -131,6 +156,13 @@ public class Main {
 			}
 			Main.dispGraph.run();
 			runBest();
+			try{
+				FileOutputStream fout = new FileOutputStream("players.ai");
+				ObjectOutputStream oos = new ObjectOutputStream(fout);
+				oos.writeObject(players);
+				fout.close();
+				oos.close();
+			}catch(Exception e){}
 		}
 
 		public static void generation() {
@@ -146,7 +178,7 @@ public class Main {
 				}
 				scores[i] /= NUM_TRIAL;
 				if (i % 200 == 0) {
-					 System.out.println(i);
+//					 System.out.println(i);
 				}
 			}
 			ArrayIndexComparator<Integer> comparator = new ArrayIndexComparator<Integer>(scores);

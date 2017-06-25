@@ -1,11 +1,12 @@
 package com.github.thegithubgeek.AI2048;
 
+import java.io.*;
 import java.util.*;
 
 import com.github.thegithubgeek.AI2048.Game2048.Tile;
 import com.github.thegithubgeek.AI2048.OldPlayer.ArrayIndexComparator;
 
-public class Player {
+public class Player implements Serializable{
 	ArrayList<Layer> layers = new ArrayList<>();
 	FinalLayer finLayer;
 	public static final int MAX_INIT_LAYER_NUM = 4;

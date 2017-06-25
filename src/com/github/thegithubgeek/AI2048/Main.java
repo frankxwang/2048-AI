@@ -13,7 +13,7 @@ public class Main {
 	static final int NUM_PLAYERS = 1000;
 	static final int KILL_RATE = 500;
 	static final int NUM_TRIAL = 5;
-	static final int GEN_NUM = 100;
+	static final int GEN_NUM = 1000;
 	static Player[] players = new Player[NUM_PLAYERS];
 	static Integer[] scores = new Integer[NUM_PLAYERS];
 	static boolean lost = false;
@@ -27,7 +27,7 @@ public class Main {
 	static ArrayList<Double> best = new ArrayList<>();
 	
 	public static void main(String[] args) {
-		System.err.close();// turn off errors
+//		System.err.close();// turn off errors
 		JFrame game = new JFrame();
 		game.setTitle("2048 Game");
 		game.setDefaultCloseOperation(WindowConstants.EXIT_ON_CLOSE);
@@ -54,9 +54,10 @@ public class Main {
 			@Override
 			public void actionPerformed(ActionEvent e) {
 				evolve = new Evolve();
-				running = false;
+				running = true;
+//				evolve.getUncaughtExceptionHandler().uncaughtException(evolve, new Throwable());
 				evolve.start();
-				evolve.notify();
+//				evolve.notify();
 			}
 		});
 
@@ -64,7 +65,7 @@ public class Main {
 			@Override
 			public void actionPerformed(ActionEvent e) {
 				evolve.interrupt();
-				running = true;
+				running = false;
 				evolve.notify();
 			}
 		});
@@ -108,7 +109,7 @@ public class Main {
 
 		public void run() {
 			synchronized (this) {
-				while (running) {
+				while (!running) {
 					try {
 						wait();
 					} catch (InterruptedException e) {
@@ -121,14 +122,12 @@ public class Main {
 				players[i] = new Player();
 			}
 			for (int i = 0; i < GEN_NUM; i++) {
-				try {
-					// Thread.sleep(2000);
-					// } catch (InterruptedException e) {}
-					Main.dispGraph.run();
-					generation();
-					System.out.println("GEN: " + i);
-					Game2048.gen = i + 2;
-				} catch (Exception e) {}
+				// Thread.sleep(2000);
+				// } catch (InterruptedException e) {}
+				Main.dispGraph.run();
+				generation();
+				System.out.println("GEN: " + i);
+				Game2048.gen = i + 2;
 			}
 			Main.dispGraph.run();
 			runBest();
@@ -146,8 +145,8 @@ public class Main {
 					lost = false;
 				}
 				scores[i] /= NUM_TRIAL;
-				if (i % 100 == 0) {
-					// System.out.println(i);
+				if (i % 200 == 0) {
+					 System.out.println(i);
 				}
 			}
 			ArrayIndexComparator<Integer> comparator = new ArrayIndexComparator<Integer>(scores);

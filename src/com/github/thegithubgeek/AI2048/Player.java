@@ -1,8 +1,6 @@
 package com.github.thegithubgeek.AI2048;
 
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.Iterator;
+import java.util.*;
 
 import com.github.thegithubgeek.AI2048.Game2048.Tile;
 import com.github.thegithubgeek.AI2048.OldPlayer.ArrayIndexComparator;
@@ -13,7 +11,8 @@ public class Player {
 	public static final int MAX_INIT_LAYER_NUM = 4;
 	public static final float REMOVE_LAYER_PROB = 0.001f;
 	public static final float ADD_LAYER_PROB = 0.01f;
-	public static final int MAX_NODES = 8;
+	public static final int MAX_INIT_NODES = 8;
+	public static final int MIN_NODES = 3;
 
 	public static float NODE_ADD_PROB = 0.5f;
 	public static float NODE_REMOVAL_PROB = 0.005f;
@@ -21,9 +20,11 @@ public class Player {
 	public static float MAX_CHANGE = 0.1f;
 	public static float INPUT_ADD_PROB = 0.5f;
 	public static float INPUT_REMOVAL_PROB = 0.005f;
+	
+	public static int ARR_LENGTH = 16;
 	Player() {
 		int layerNum = (int) Math.random() * MAX_INIT_LAYER_NUM;
-		int prevNodeNum = 16;
+		int prevNodeNum = ARR_LENGTH;
 		for (int i = 0; i < layerNum; i++) {
 			layers.add(Layer.genRanLayer(prevNodeNum));
 			prevNodeNum = layers.get(i).nodes.size();
@@ -38,7 +39,7 @@ public class Player {
 		this.finLayer = finLayer;
 	}
 	public Player mutate(){
-		int prevNodeNum = 16;
+		int prevNodeNum = ARR_LENGTH;
 		ArrayList<Layer> newLayers = new ArrayList<>();
 		for (int i = 0; i < layers.size(); i++) {
 			if(!chance(REMOVE_LAYER_PROB)){
@@ -55,8 +56,8 @@ public class Player {
 	}
 	public void move(){
 		ArrayList<Node> tileNode = new ArrayList<>();
-		for (int i = 0; i < 16; i++) {
-			tileNode.add(new Node(null, null));
+		for (int i = 0; i < ARR_LENGTH; i++) {
+			tileNode.add(new Node(null));
 			tileNode.get(i).value = Game2048.getTile(i);
 		}
 		
@@ -102,7 +103,7 @@ public class Player {
 		}
 		public static Layer genRanLayer(int prevLayerNodeNum){
 			ArrayList<Node> nodes = new ArrayList<>();
-			int nodeNum = (int) (Math.random()*MAX_NODES)+1;
+			int nodeNum = (int) (Math.random()*MAX_INIT_NODES)+1;
 			for(int i=0; i<nodeNum; i++){
 				nodes.add(Node.genRanNode(prevLayerNodeNum));
 			}
@@ -111,7 +112,7 @@ public class Player {
 		public Layer mutate(int prevLayerNodeNum){
 			ArrayList<Node> newNodes = new ArrayList<>();
 			for (int i = 0; i < nodes.size(); i++) {
-				if(!chance(NODE_REMOVAL_PROB)&&nodes.size()>1){
+				if(!(chance(NODE_REMOVAL_PROB)&&nodes.size()>MIN_NODES)){
 					newNodes.add(nodes.get(i).mutate(prevLayerNodeNum));
 				}
 			}
@@ -137,12 +138,7 @@ public class Player {
 		public FinalLayer mutate(int prevLayerNodeNum){
 			ArrayList<Node> newNodes = new ArrayList<>();
 			for (int i = 0; i < nodes.size(); i++) {
-				if(!chance(NODE_REMOVAL_PROB)&&nodes.size()>1){
-					newNodes.add(nodes.get(i).mutate(prevLayerNodeNum));
-				}
-			}
-			if(chance(NODE_ADD_PROB)){
-				newNodes.add(Node.genRanNode(prevLayerNodeNum));
+				newNodes.add(nodes.get(i).mutate(prevLayerNodeNum));
 			}
 			Main.dispGraph.run();
 			return new FinalLayer(newNodes);
@@ -150,48 +146,34 @@ public class Player {
 	}
 	static class Node{
 		ArrayList<Float> weights;
-		ArrayList<Integer> inputs;
 		float value = 0;
-		Node(ArrayList<Float> weights, ArrayList<Integer> inputs){
+		Node(ArrayList<Float> weights){
 			this.weights = weights;
-			this.inputs = inputs;
 		}
-		public static Node genRanNode(int maxInput){
+		public static Node genRanNode(int prevNodeNum){
 			ArrayList<Float> weights = new ArrayList<>();
-			ArrayList<Integer> inputs = new ArrayList<>();
-			weights.add((float) Math.random());
-			inputs.add((int) (Math.random()*maxInput));
-			return new Node(weights,inputs);
-		}
-		public Node mutate(int maxInput){
-			ArrayList<Float> newWeights = new ArrayList<>();
-			ArrayList<Integer> newInputs = new ArrayList<>();
-			for (int i = 0; i < inputs.size(); i++) {
-				if(!(chance(INPUT_REMOVAL_PROB)&&inputs.size()>1)){
-					newWeights.add((float) (weights.get(i)+(Math.random()-0.5)*2*MAX_CHANGE));
-					newInputs.add(inputs.get(i));
-				}
+			for (int i = 0; i < prevNodeNum; i++) {
+				weights.add((float) Math.random());
 			}
-			if(chance(INPUT_ADD_PROB)){
+			return new Node(weights);
+		}
+		public Node mutate(int prevNodeNum){
+			ArrayList<Float> newWeights = new ArrayList<>();
+			for (int i = 0; i < weights.size(); i++) {
+				newWeights.add((float) (weights.get(i)+(Math.random()-0.5)*2*MAX_CHANGE));
+			}
+			for(int i=weights.size(); i<prevNodeNum; i++){
 				newWeights.add((float) Math.random());
-				newInputs.add((int) (Math.random()*maxInput));
 			}
 			Main.dispGraph.run();
-			return new Node(newWeights, newInputs);
+			return new Node(newWeights);
 		}
 		public void compute(Layer layer){
-			ArrayList<Integer> invalid = new ArrayList<>();
-			for (int i = 0; i < inputs.size(); i++) {
-				if(inputs.get(i)>=layer.nodes.size()){
-					invalid.add(i);
-					continue;
+			for (int i = 0; i < layer.nodes.size(); i++) {
+				if(weights.size()<=i){
+					weights.add((float) Math.random());
 				}
-				value += layer.nodes.get(inputs.get(i)).value * weights.get(i);
-			}
-			for (Iterator<Integer> iterator = invalid.iterator(); iterator.hasNext();) {
-				Integer val = iterator.next();
-				inputs.remove(val);
-				weights.remove(val);
+				value += layer.nodes.get(i).value * weights.get(i);
 			}
 		}
 	}

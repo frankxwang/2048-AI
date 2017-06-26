@@ -172,9 +172,9 @@ public class Main {
 					Player player = players[i];
 					Main.run(player, 0);
 					Main.dispGraph.run();
-					Arrays.sort(Game2048.myTiles);
-					scores[i] += Game2048.myTiles[15].value;
-//					scores[i] += Game2048.myScore;
+//					Arrays.sort(Game2048.myTiles);
+//					scores[i] += Game2048.myTiles[15].value;
+					scores[i] += Game2048.myScore;
 					game2048.resetGame();
 					lost = false;
 				}

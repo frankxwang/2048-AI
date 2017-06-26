@@ -178,18 +178,18 @@ public class Main {
 					Arrays.sort(Game2048.myTiles);
 					int repNum = 1;
 					int prevValue = Game2048.getTile(0);
-					for (int k = 1; k < 16; k++) {
-						if(prevValue==Game2048.getTile(k)){
-							repNum++;
-						}else{
-							prevValue = Game2048.getTile(k);
-							repNum = 1;
-						}
-						if(repNum==3){
-							scores[i]-=Game2048.myScore/2;
-							break;
-						}
-					}
+//					for (int k = 1; k < 16; k++) {
+//						if(prevValue==Game2048.getTile(k)){
+//							repNum++;
+//						}else{
+//							prevValue = Game2048.getTile(k);
+//							repNum = 1;
+//						}
+//						if(repNum==3){
+//							scores[i]-=Game2048.myScore/2;
+//							break;
+//						}
+//					}
 					game2048.resetGame();
 					lost = false;
 				}

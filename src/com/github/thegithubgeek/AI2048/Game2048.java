@@ -322,8 +322,8 @@ public class Game2048 extends JPanel {
 //				g.drawString("Press ESC to play again", 80, getHeight() - 40);
 //			}
 		}
-//		g.setFont(new Font(FONT_NAME, Font.PLAIN, 18));
-//		g.drawString("Score: " + myScore, 200, 365);
+		g.setFont(new Font(FONT_NAME, Font.PLAIN, 18));
+		g.drawString("Score: " + myScore, 200, 365);
 
 	}
 
@@ -331,7 +331,7 @@ public class Game2048 extends JPanel {
 		return arg * (TILES_MARGIN + TILE_SIZE) + TILES_MARGIN;
 	}
 
-	static class Tile {
+	static class Tile implements Comparable<Tile>{
 	    int value;
 	    @Override
 	    public boolean equals(Object o){
@@ -369,6 +369,11 @@ public class Game2048 extends JPanel {
 	    	}
 	    	return new Color(0xcdc1b4);
 	    }
+		@Override
+		public int compareTo(Tile o) {
+			// TODO Auto-generated method stub
+			return value-o.value;
+		}
 	}
 	public static int getTile(int num) {
 			return myTiles[num].value;

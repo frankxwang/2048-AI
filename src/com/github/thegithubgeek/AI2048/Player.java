@@ -60,6 +60,7 @@ public class Player implements Serializable{
 		for (int i = 0; i < ARR_LENGTH; i++) {
 			tileNode.add(new Node(null));
 			tileNode.get(i).value = Game2048.getTile(i);
+//			tileNode.get(i).value = (float) (Math.log(Game2048.getTile(i)) / Math.log(2));
 		}
 		
 		Layer myTiles = new Layer(tileNode);

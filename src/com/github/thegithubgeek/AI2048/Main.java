@@ -291,8 +291,8 @@ public class Main {
 			g.fillRoundRect(10, 10, 320, 320, 20, 20);
 			
 			g.setColor(Color.DARK_GRAY);
-			g.setFont(new Font("SansSerif", Font.PLAIN, 18));
-			g.drawString("Graph of Results", 100, 40);
+			g.setFont(new Font("Calibri", Font.BOLD, 24));
+			g.drawString("Graph of Results", 82, 45);
 			
 			g.setColor(new Color(0xc1c1c1));
 			g.fillRect(50, 60, 230, 2);
@@ -310,7 +310,7 @@ public class Main {
 			g.fillRect(50, 290, 232, 2);
 			
 			if (median.size() == 0) {
-				g.setFont(new Font("Arial", Font.ROMAN_BASELINE, 48));
+				g.setFont(new Font("Tahoma", Font.ROMAN_BASELINE, 48));
 				g.setColor(new Color(0xff6700));
 				g.fillRoundRect(109, 145, 114, 58, 25, 25);
 				g.setColor(Color.WHITE);
@@ -324,12 +324,15 @@ public class Main {
 				
 //				System.out.println("(" + regX + ", " + regY + ")");
 				
-				g.setColor(Color.BLUE);
-				g.fillOval(regX + 48, regY+288, 5, 5);
-				g.setColor(Color.BLACK);
-				g.fillOval(regX + 47, regYB+288, 5, 5);
+				if (blue) {
+					g.setColor(Color.BLUE);
+					g.fillOval(regX + 48, regY+288, 5, 5);
+				} else {
+					g.setColor(Color.BLACK);
+					g.fillOval(regX + 47, regYB+288, 5, 5);
+				}
 				g.setColor(new Color(0xc1c1c1));
-				g.setFont(new Font("Arial", Font.PLAIN, 12));
+				g.setFont(new Font("Courier", Font.BOLD, 12));
 				g.drawString((int)min+"", 290, 296);
 				g.drawString("1", 48, 315);
 				if (median.size() > 1) {
@@ -338,10 +341,13 @@ public class Main {
 						int regYP = (int) (-((median.get(i-1) - min)/getDiffAbs(scale))*230);
 						int regYPB = (int) (-((best.get(i-1) - min)/getDiffAbs(scale))*230);
 						
-						g.setColor(Color.BLUE);
-						g.drawLine(regX + 50, regY+290, regXP + 50, regYP+290);
-						g.setColor(Color.BLACK);
-						g.drawLine(regX + 50, regYB+290, regXP + 50, regYPB+290);
+						if (blue) {
+							g.setColor(Color.BLUE);
+							g.drawLine(regX + 50, regY+290, regXP + 50, regYP+290);
+						} else {
+							g.setColor(Color.BLACK);
+							g.drawLine(regX + 50, regYB+290, regXP + 50, regYPB+290);
+						}
 						
 						g.setColor(new Color(0xc1c1c1));
 						g.drawString((int)(min+getDiffAbs(scale))+"", 290, 66);
@@ -351,12 +357,12 @@ public class Main {
 						
 						g.drawString(coord.format(median.size()).toString(), 
 								280-coord.format(median.size()).toString().length()*3, 315);
-						g.drawString(coord.format(median.size()*0.75).toString(), 
-								223-coord.format(median.size()*0.75).toString().length()*3, 315);
-						g.drawString(coord.format(median.size()*0.5).toString(), 
-								165-coord.format(median.size()*0.5).toString().length()*3, 315);
-						g.drawString(coord.format(median.size()*0.25).toString(), 
-								108-coord.format(median.size()*0.25).toString().length()*3, 315);
+						g.drawString(coord.format((median.size()-1)*0.75+1).toString(), 
+								223-coord.format((median.size()-1)*0.75+1).toString().length()*3, 315);
+						g.drawString(coord.format((median.size()-1)*0.5+1).toString(), 
+								165-coord.format((median.size()-1)*0.55+1).toString().length()*3, 315);
+						g.drawString(coord.format((median.size()-1)*0.25+1).toString(), 
+								108-coord.format((median.size()-1)*0.25+1).toString().length()*3, 315);
 					}
 				}
 			}

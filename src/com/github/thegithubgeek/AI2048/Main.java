@@ -15,7 +15,7 @@ public class Main {
 	static final int NUM_PLAYERS = 1000;
 	static final int KILL_RATE = 500;
 	static final int NUM_TRIAL = 5;
-	static final int GEN_NUM = 1000;
+	static final int GEN_NUM = Integer.MAX_VALUE;
 	static Player[] players = new Player[NUM_PLAYERS];
 	static Integer[] scores = new Integer[NUM_PLAYERS];
 	static boolean lost = false;
@@ -175,6 +175,21 @@ public class Main {
 //					Arrays.sort(Game2048.myTiles);
 //					scores[i] += Game2048.myTiles[15].value;
 					scores[i] += Game2048.myScore;
+					Arrays.sort(Game2048.myTiles);
+					int repNum = 1;
+					int prevValue = Game2048.getTile(0);
+					for (int k = 1; k < 16; k++) {
+						if(prevValue==Game2048.getTile(k)){
+							repNum++;
+						}else{
+							prevValue = Game2048.getTile(k);
+							repNum = 1;
+						}
+						if(repNum==3){
+							scores[i]-=Game2048.myScore/2;
+							break;
+						}
+					}
 					game2048.resetGame();
 					lost = false;
 				}

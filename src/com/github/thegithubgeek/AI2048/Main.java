@@ -349,10 +349,14 @@ public class Main {
 						g.drawString((int)(min+0.5*getDiffAbs(scale))+"", 290, 181);
 						g.drawString((int)(min+0.25*getDiffAbs(scale))+"", 290, 238);
 						
-						g.drawString(coord.format(median.size()).toString(), 278, 315);
-						g.drawString(coord.format(median.size()*0.75).toString(), 221, 315);
-						g.drawString(coord.format(median.size()*0.5).toString(), 163, 315);
-						g.drawString(coord.format(median.size()*0.25).toString(), 106, 315);
+						g.drawString(coord.format(median.size()).toString(), 
+								280-coord.format(median.size()).toString().length()*3, 315);
+						g.drawString(coord.format(median.size()*0.75).toString(), 
+								223-coord.format(median.size()*0.75).toString().length()*3, 315);
+						g.drawString(coord.format(median.size()*0.5).toString(), 
+								165-coord.format(median.size()*0.5).toString().length()*3, 315);
+						g.drawString(coord.format(median.size()*0.25).toString(), 
+								108-coord.format(median.size()*0.25).toString().length()*3, 315);
 					}
 				}
 			}
